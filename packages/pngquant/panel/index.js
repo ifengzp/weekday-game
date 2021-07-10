@@ -90,7 +90,7 @@ Editor.Panel.extend({
 
       data: {
         list: [],
-        project: 'build/wechatgame',
+        project: 'build/web-mobile',
         qualityMin: 5,
         qualityMax: 90,
         progress: 0,
