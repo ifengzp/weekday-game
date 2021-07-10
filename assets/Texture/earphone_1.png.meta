@@ -1,0 +1,36 @@
+{
+  "ver": "2.3.5",
+  "uuid": "60bad530-d414-401d-9f57-ff77f40a563a",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "width": 358,
+  "height": 337,
+  "platformSettings": {},
+  "subMetas": {
+    "earphone_1": {
+      "ver": "1.0.4",
+      "uuid": "c6fa6579-2120-44d8-adbc-a99e632d449f",
+      "rawTextureUuid": "60bad530-d414-401d-9f57-ff77f40a563a",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 0,
+      "trimY": 0,
+      "width": 358,
+      "height": 337,
+      "rawWidth": 358,
+      "rawHeight": 337,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

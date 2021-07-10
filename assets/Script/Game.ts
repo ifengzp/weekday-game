@@ -1,4 +1,4 @@
-import utils from "./Utils";
+import { sleep } from "./Utils";
 const { ccclass, property } = cc._decorator;
 
 @ccclass
@@ -15,13 +15,27 @@ export default class Game extends cc.Component {
   @property({ type: cc.Node }) beginBtn: cc.Node = null;
   @property({ type: cc.Node }) snow: cc.Node = null;
   @property({ type: cc.Node }) main: cc.Node = null;
+  @property({ type: cc.Node }) earphone: cc.Node = null;
 
-  async onLoad() {
+  onLoad() {
+    this.earphone.active = true;
+    // TODO: 删除
+    this.test();
+
+  }
+
+  async openEarphoneCb() {
     cc.audioEngine.play(this.bgAudio, true, 0.4);
     this.snow.active = true;
     this.blackCurtainMask.active = true;
-    this.blackCurtainMask.opacity = 255;
-    await utils.sleep();
+    this.blackCurtainMask.opacity = 0;
+    cc.tween(this.blackCurtainMask)
+      .to(1, { opacity: 255 })
+      .call(() => {
+        this.earphone.active = false;
+      })
+      .start();
+    await sleep();
     this.introductionScenario();
     cc.tween(this.blackCurtainMask)
       .to(2, { opacity: 0 })
@@ -29,6 +43,13 @@ export default class Game extends cc.Component {
         this.blackCurtainMask.active = false;
       })
       .start();
+  }
+
+  test() {
+    cc.audioEngine.play(this.bgAudio, true, 0.4);
+    cc.audioEngine.play(this.heartAudio, true, 0.4);
+
+    this.main.active = true;
   }
 
   introductionScenario() {
@@ -147,7 +168,7 @@ export default class Game extends cc.Component {
       })
       .start();
 
-    await utils.sleep(6000);
+    await sleep(6000);
     this.metempsychosisPanel();
     cc.tween(this.blackCurtainMask)
       .to(1, { opacity: 0 })
