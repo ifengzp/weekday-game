@@ -1,3 +1,4 @@
+import utils from "./Utils";
 const { ccclass, property } = cc._decorator;
 
 @ccclass
@@ -15,16 +16,13 @@ export default class Game extends cc.Component {
   @property({ type: cc.Node }) snow: cc.Node = null;
   @property({ type: cc.Node }) main: cc.Node = null;
 
-  onLoad() {
+  async onLoad() {
     cc.audioEngine.play(this.bgAudio, true, 0.4);
     this.snow.active = true;
     this.blackCurtainMask.active = true;
     this.blackCurtainMask.opacity = 255;
-
-    setTimeout(() => {
-      this.introductionScenario();
-    }, 1000);
-
+    await utils.sleep();
+    this.introductionScenario();
     cc.tween(this.blackCurtainMask)
       .to(2, { opacity: 0 })
       .call(() => {
@@ -55,7 +53,7 @@ export default class Game extends cc.Component {
       .call(() => {
         const avatar = this.building.getChildByName("avatarIcon");
         avatar.opacity = 0;
-        avatar.setScale(0.2);
+        avatar.setScale(0.3);
         cc.tween(avatar)
           .to(1.5, { opacity: 255 })
           .call(() => {
@@ -98,12 +96,12 @@ export default class Game extends cc.Component {
     this.beginBtn.opacity = 0;
 
     cc.tween(this.startPanel)
-      .to(0.13, { opacity: 0 })
-      .to(0.13, { opacity: 255 })
-      .to(0.13, { opacity: 100 })
-      .to(0.13, { opacity: 255 })
-      .to(0.13, { opacity: 150 })
-      .to(0.13, { opacity: 255 })
+      .to(0.14, { opacity: 0 })
+      .to(0.14, { opacity: 255 })
+      .to(0.14, { opacity: 100 })
+      .to(0.14, { opacity: 255 })
+      .to(0.14, { opacity: 150 })
+      .to(0.14, { opacity: 255 })
       .call(() => {
         const animator = this.beginTip.getComponents(cc.Animation)[0];
         this.beginTip.active = true;
@@ -134,13 +132,13 @@ export default class Game extends cc.Component {
       .start();
   }
 
-  ending() {
+  async ending() {
     console.log("结束");
     this.blackCurtainMask.active = true;
     this.blackCurtainMask.opacity = 0;
 
     cc.audioEngine.stopAll();
-    cc.audioEngine.play(this.failAudio, false, 1);
+    cc.audioEngine.play(this.failAudio, false, 0.4);
 
     cc.tween(this.blackCurtainMask)
       .to(1, { opacity: 255 })
@@ -149,15 +147,14 @@ export default class Game extends cc.Component {
       })
       .start();
 
-    setTimeout(() => {
-      this.metempsychosisPanel();
-      cc.tween(this.blackCurtainMask)
-        .to(1, { opacity: 0 })
-        .call(() => {
-          this.blackCurtainMask.active = false;
-          cc.audioEngine.play(this.bgAudio, true, 0.4);
-        })
-        .start();
-    }, 6000);
+    await utils.sleep(6000);
+    this.metempsychosisPanel();
+    cc.tween(this.blackCurtainMask)
+      .to(1, { opacity: 0 })
+      .call(() => {
+        this.blackCurtainMask.active = false;
+        cc.audioEngine.play(this.bgAudio, true, 0.4);
+      })
+      .start();
   }
 }
