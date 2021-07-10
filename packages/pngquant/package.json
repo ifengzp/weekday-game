@@ -1,0 +1,19 @@
+{
+  "name": "pngquant",
+  "version": "0.1.0",
+  "description": "a png compression plug for build project.",
+  "author": "Saint",
+  "main": "main.js",
+  "main-menu": {
+    "i18n:MAIN_MENU.package.title/👉今天发版🍷🍺☕️✌️": {
+      "message": "pngquant:open"
+    }
+  },
+  "panel": {
+    "main": "panel/index.js",
+    "type": "dockable",
+    "title": "pngquant",
+    "width": 400,
+    "height": 800
+  }
+}
