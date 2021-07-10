@@ -601,6 +601,12 @@
     "mineCover": {
       "__uuid__": "7d645b92-7f07-486c-9535-1fea33c179ad"
     },
+    "endingCover": {
+      "__uuid__": "3e90dab9-cdd3-4e67-bba6-6615bdd0e81d"
+    },
+    "endingNode": null,
+    "endingMask": null,
+    "endingLightning": null,
     "scoreLabel": {
       "__id__": 3
     },

@@ -7,6 +7,7 @@ export default class Card extends cc.Component {
   @property([cc.SpriteFrame]) negativeCover: cc.SpriteFrame[] = [];
   @property([cc.SpriteFrame]) mineStatus: cc.SpriteFrame[] = [];
   @property(cc.SpriteFrame) mineCover: cc.SpriteFrame = null;
+  @property(cc.SpriteFrame) endingCover: cc.SpriteFrame = null;
 
   @property(cc.Label) scoreLabel: cc.Label = null;
   @property(cc.Node) hurtMask: cc.Node = null;
@@ -16,16 +17,10 @@ export default class Card extends cc.Component {
   score: number = 0;
   index: number = 0;
   isMe: boolean = false;
+  isBoss: boolean = false;
 
-  init(
-    score: number,
-    pos: cc.Vec2,
-    index: number,
-    isMe = false,
-    startPos?: cc.Vec2
-  ) {
+  init(score: number, index: number, isMe = false, isBoss = false) {
     this.setScore(score);
-    startPos ? this.cardMove(1, pos, startPos) : this.cardMove(1, pos);
 
     // reset 一些状态
     this.node.opacity = 255;
@@ -33,6 +28,7 @@ export default class Card extends cc.Component {
     this.hurtBling.opacity = 0;
     this.hurtBling.setScale(0.5);
     this.mineNode.active = false;
+    this.isBoss = isBoss;
 
     this.index = index;
     this.isMe = isMe;
@@ -45,6 +41,8 @@ export default class Card extends cc.Component {
           : score > 4
           ? this.mineStatus[1]
           : this.mineStatus[2];
+    } else if (isBoss) {
+      this.node.getComponent(cc.Sprite).spriteFrame = this.endingCover;
     } else {
       const coverList = score > 0 ? this.positiveCover : this.negativeCover;
       const idx = random(0, coverList.length - 1);
@@ -69,10 +67,26 @@ export default class Card extends cc.Component {
     }
   }
 
-  cardMove(time: number, end: cc.Vec2, start?: cc.Vec2 ) {
-    if (start) this.node.setPosition(start);
-    // @ts-ignore
-    cc.tween(this.node).to(time, { position: end }).start();
+  cardMove(data: {
+    duration: number;
+    stScale: number;
+    endPos: cc.Vec2;
+    stPos?: cc.Vec2;
+    delay?: number;
+  }) {
+    const { duration, stScale, endPos, stPos, delay } = data;
+    if (stPos) this.node.setPosition(stPos);
+    this.node.setScale(stScale);
+    delay
+      ? cc
+          .tween(this.node)
+          .delay(delay)
+          .to(duration, { position: endPos, scale: 1 })
+          .start()
+      : cc
+          .tween(this.node)
+          .to(duration, { position: endPos, scale: 1 })
+          .start();
   }
   shake() {
     const pos = this.node.getPosition();

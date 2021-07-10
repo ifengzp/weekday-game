@@ -1,4 +1,4 @@
-import { CardsSequence, RoleBlood } from "./GameDefined";
+import { BossBlood, CardsSequence, RoleBlood } from "./GameDefined";
 import Card from "./Card";
 import { random, shuffle, sleep } from "./Utils";
 const { ccclass, property } = cc._decorator;
@@ -15,13 +15,15 @@ const AttackRelation = [
   [4, 6, 8],
   [5, 7],
 ];
-const StartPos = cc.v2(0, 500);
 
 @ccclass
 export default class Main extends cc.Component {
   @property(cc.Prefab) cardPrefab: cc.Prefab = null;
   @property(cc.Node) cardsSlotBgBox: cc.Node = null;
   @property(cc.Node) cardsSlotBox: cc.Node = null;
+  @property(cc.Node) countNode: cc.Node = null;
+  @property(cc.Label) countLabel: cc.Label = null;
+  @property(cc.Node) ending: cc.Node = null;
 
   /* 卡片节点池 */
   private cardsPool: cc.NodePool = null;
@@ -38,8 +40,15 @@ export default class Main extends cc.Component {
   combination: number[] = [];
   /* 锁定操作 */
   lock: boolean = false;
+  /* 发牌起点坐标 */
+  cardStartPos: cc.Vec2 = null;
+  isRandomTime: boolean = false;
 
   onLoad() {
+    // !hack骚操作，不想转换坐标了，因为那个节点用的是widget，所以可以算出来，这个位置相对是固定的
+    const { width, height } = cc.view.getVisibleSize();
+    this.cardStartPos = cc.v2(-width / 2, height / 2).subtract(cc.v2(-80, 100));
+
     this.init();
     this.restart();
   }
@@ -82,21 +91,30 @@ export default class Main extends cc.Component {
           this.lock = false;
         }, 2);
         const newBlood = this.mineBlood + score;
+        const isBoss = curCard.getComponent(Card).isBoss;
         console.log(111, this.mineBlood, score);
-        card.cardHurt(newBlood >= 0);
+        card.cardHurt(newBlood >= 0 && !isBoss);
         await sleep(800);
         if (newBlood >= 0) {
+          // 还活着
           const mineCardCmp = this.mineCard.getComponent(Card);
           // 扣血
           mineCardCmp.setScore(newBlood);
           this.mineBlood = newBlood;
 
+          if (isBoss) {
+            // 是boss，赢了
+            this.gameOver(true);
+            return;
+          }
+
           // 回收卡片 & 移动位置
           const _oldIdx = this.mineIdx;
-          mineCardCmp.cardMove(
-            0.6,
-            this.cardsSlotBgBox.children[index].getPosition()
-          );
+          mineCardCmp.cardMove({
+            duration: 1,
+            stScale: 1,
+            endPos: this.cardsSlotBgBox.children[index].getPosition(),
+          });
           mineCardCmp.setIndex(index);
           this.mineIdx = index;
           await sleep(1000);
@@ -106,11 +124,25 @@ export default class Main extends cc.Component {
           );
           this.cardsPool.put(curCard);
         } else {
-          // TODO: 游戏结束
-          console.log("GAME_over");
+          this.gameOver(false);
         }
       }
     }
+  }
+
+  gameOver(success: boolean) {
+    console.log("GAME_over", success);
+
+    // 回收卡片
+    this.scheduleOnce(() => {
+      this.onTableCards.forEach((cards) => this.cardsPool.put(cards));
+      this.onTableCards = [];
+      this.cardsPool.put(this.mineCard);
+    }, 0.6);
+
+    this.node.dispatchEvent(
+      new cc.Event.EventCustom(success ? "gameWin" : "gameFail", true)
+    );
   }
 
   initCardsPool() {
@@ -122,18 +154,54 @@ export default class Main extends cc.Component {
     }
   }
 
-  makeACard(index: number, endPos: cc.Vec2) {
+  async makeACard(index: number, endPos: cc.Vec2) {
     const card = this.cardsPool.get();
     const cardCmp = card.getComponent(Card);
-    // TODO: 分数没有, 要出大boss;然后随机出牌
-    const score = this.combination.pop();
-    //@ts-ignore
-    cardCmp.init(score, endPos, index, false, StartPos);
-    this.onTableCards[index] = card;
-    this.cardsSlotBox.addChild(card);
+    if (this.combination.length <= 0 && !this.isRandomTime) {
+      // 出大boss，然后随机出牌
+      this.isRandomTime = true;
+      this.ending.opacity = 255;
+      this.ending.active = true;
+      this.ending.getComponent(cc.Animation).play();
+      await sleep(1500);
+      cc.tween(this.ending)
+        .to(1, { opacity: 0 })
+        .call(() => {
+          this.ending.active = false;
+        })
+        .start();
+      cardCmp.init(BossBlood, index, false, true);
+      cardCmp.cardMove({
+        duration: 0.5,
+        stScale: 1,
+        stPos: cc.v2(0, 0),
+        endPos: endPos,
+      });
+      this.onTableCards[index] = card;
+      this.cardsSlotBox.addChild(card);
+      return;
+    } else {
+      this.countLabel.string = String(this.combination.length || "Boss");
+      const score = this.isRandomTime
+        ? Math.random() > 0.5
+          ? random(0, 6)
+          : -random(0, 6)
+        : this.combination.pop();
+      cardCmp.init(score, index, false);
+      cardCmp.cardMove({
+        duration: 0.5,
+        stScale: 0.2,
+        stPos: this.cardStartPos,
+        endPos: endPos,
+      });
+
+      this.onTableCards[index] = card;
+      this.cardsSlotBox.addChild(card);
+    }
   }
 
   restart() {
+    this.isRandomTime = false;
     const cardsSequenceIdx = random(0, CardsSequence.length - 1);
     this.combination = shuffle(CardsSequence[cardsSequenceIdx]);
 
@@ -142,15 +210,29 @@ export default class Main extends cc.Component {
 
     for (let count = 0; count < 9; count++) {
       const isMe = count == 4;
-      const cardScore = isMe ? this.mineBlood : this.combination.pop();
+      const cardScore = isMe
+        ? this.mineBlood
+        : this.isRandomTime
+        ? Math.random() > 0.5
+          ? random(0, 6)
+          : -random(0, 6)
+        : this.combination.pop();
       const card = this.cardsPool.get();
       const endPos = this.cardsSlotBgBox.children[count].getPosition();
 
-      //@ts-ignore
-      card.getComponent(Card).init(cardScore, endPos, count, isMe, StartPos);
+      card.getComponent(Card).init(cardScore, count, isMe);
+      card.getComponent(Card).cardMove({
+        duration: 0.5,
+        stScale: 0.2,
+        stPos: this.cardStartPos,
+        endPos: endPos,
+        delay: count * 0.08,
+      });
+
       this.onTableCards.push(card);
       this.cardsSlotBox.addChild(card);
       if (isMe) this.mineCard = card;
     }
+    this.countLabel.string = String(this.combination.length + 1);
   }
 }

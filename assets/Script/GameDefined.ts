@@ -1,7 +1,7 @@
 /* 主角血量 */
 export const RoleBlood = 10;
 /* 通关血量 */
-export const PassBlood = 10;
+export const BossBlood = -10;
 /* 卡片组合 */
 export const CardsSequence: number[][] = [
   [1, 1, 1, 2, 2, 2, 2, 3, 3, 4, 5, -1, -1, -2, -2, -3, -4, -5], // 26 - 18 = 8

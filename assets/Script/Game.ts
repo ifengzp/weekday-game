@@ -1,4 +1,6 @@
 import { sleep } from "./Utils";
+import Main from "./Main";
+
 const { ccclass, property } = cc._decorator;
 
 @ccclass
@@ -17,11 +19,20 @@ export default class Game extends cc.Component {
   @property({ type: cc.Node }) main: cc.Node = null;
   @property({ type: cc.Node }) earphone: cc.Node = null;
 
+  private playCount: number = 0;
+
   onLoad() {
     this.earphone.active = true;
-    // TODO: 删除
-    this.test();
+    // // TODO: 删除
+    // this.test();
+    this.node.on("gameWin", this.gameOver.bind(this, true));
+    this.node.on("gameFail", this.gameOver.bind(this, false));
+  }
 
+  gameOver(success) {
+    // TODO: 区分胜利和失败
+    console.log(success ? "游戏胜利" : "游戏失败");
+    this.ending();
   }
 
   async openEarphoneCb() {
@@ -144,6 +155,8 @@ export default class Game extends cc.Component {
       .to(1, { opacity: 255 })
       .call(() => {
         this.main.active = true;
+        this.playCount += 1;
+        if (this.playCount > 1) this.main.getComponent(Main).restart();
       })
       .to(1, { opacity: 0 })
       .call(() => {
