@@ -1,4 +1,4 @@
-import { BossBlood, CardsSequence, RoleBlood } from "./GameDefined";
+import { BossBlood, CardsSequence, RoleBlood, TipsMap } from "./GameDefined";
 import Card from "./Card";
 import { random, shuffle, sleep } from "./Utils";
 const { ccclass, property } = cc._decorator;
@@ -24,6 +24,8 @@ export default class Main extends cc.Component {
   @property(cc.Node) countNode: cc.Node = null;
   @property(cc.Label) countLabel: cc.Label = null;
   @property(cc.Node) ending: cc.Node = null;
+  @property(cc.Node) tipsNode: cc.Node = null;
+  @property(cc.Label) tipsLabel: cc.Label = null;
 
   /* 卡片节点池 */
   private cardsPool: cc.NodePool = null;
@@ -62,6 +64,22 @@ export default class Main extends cc.Component {
     });
   }
 
+  showTip(score) {
+    const tipItem = TipsMap.find((item) => item.val == score);
+    this.tipsNode.active = true;
+    this.tipsNode.opacity = 0;
+    this.tipsLabel.string =
+      tipItem && tipItem.tip ? tipItem.tip : "疲惫让我合上了电脑";
+
+    cc.tween(this.tipsNode)
+      .to(0.5, {
+        opacity: 255,
+      })
+      .delay(0.5)
+      .to(0.5, { opacity: 0 })
+      .start();
+  }
+
   async attack(event: cc.Event) {
     const cardNode = event.target as cc.Node;
     const card = cardNode.getComponent(Card);
@@ -92,6 +110,7 @@ export default class Main extends cc.Component {
         }, 2);
         const newBlood = this.mineBlood + score;
         const isBoss = curCard.getComponent(Card).isBoss;
+        this.showTip(score);
         console.log(111, this.mineBlood, score);
         card.cardHurt(newBlood >= 0 && !isBoss);
         await sleep(800);
@@ -132,6 +151,8 @@ export default class Main extends cc.Component {
 
   gameOver(success: boolean) {
     console.log("GAME_over", success);
+    this.tipsNode.active = false;
+    this.tipsNode.opacity = 0;
 
     // 回收卡片
     this.scheduleOnce(() => {
@@ -149,7 +170,7 @@ export default class Main extends cc.Component {
     this.cardsPool = new cc.NodePool();
     new cc.NodePool();
     // 九张卡片，加两张新卡片
-    for (let count = 0; count < 11; count++) {
+    for (let count = 0; count < 30; count++) {
       this.cardsPool.put(cc.instantiate(this.cardPrefab));
     }
   }
@@ -184,8 +205,8 @@ export default class Main extends cc.Component {
       this.countLabel.string = String(this.combination.length || "Boss");
       const score = this.isRandomTime
         ? Math.random() > 0.5
-          ? random(0, 6)
-          : -random(0, 6)
+          ? random(0, 3)
+          : -random(0, 3)
         : this.combination.pop();
       cardCmp.init(score, index, false);
       cardCmp.cardMove({
