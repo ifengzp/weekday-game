@@ -138,6 +138,8 @@ export default class Game extends cc.Component {
       .to(0.14, { opacity: 255 })
       .to(0.14, { opacity: 150 })
       .to(0.14, { opacity: 255 })
+      .to(0.14, { opacity: 150 })
+      .to(0.14, { opacity: 255 })
       .call(() => {
         const animator = this.beginTip.getComponents(cc.Animation)[0];
         this.beginTip.active = true;
