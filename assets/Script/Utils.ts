@@ -24,5 +24,5 @@ export function shuffle<T>(arr: Array<T>): Array<T> {
     arr[randomIndex] = temporaryValue;
   }
 
-  return arr;
+  return JSON.parse(JSON.stringify(arr));
 }

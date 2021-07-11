@@ -19,6 +19,10 @@ export default class Game extends cc.Component {
   @property({ type: cc.Node }) main: cc.Node = null;
   @property({ type: cc.Node }) earphone: cc.Node = null;
 
+  @property({ type: cc.Node }) endingNode: cc.Node = null;
+  @property({ type: cc.Node }) endingSuccess: cc.Node = null;
+  @property({ type: cc.Node }) endingFail: cc.Node = null;
+
   private playCount: number = 0;
 
   onLoad() {
@@ -32,7 +36,7 @@ export default class Game extends cc.Component {
   gameOver(success) {
     // TODO: 区分胜利和失败
     console.log(success ? "游戏胜利" : "游戏失败");
-    this.ending();
+    this.ending(success);
   }
 
   async openEarphoneCb() {
@@ -149,6 +153,7 @@ export default class Game extends cc.Component {
   play() {
     this.blackCurtainMask.active = true;
     this.blackCurtainMask.opacity = 0;
+    this.beginBtn.active = false;
 
     cc.tween(this.startPanel).to(1, { opacity: 0 }).start();
     cc.tween(this.blackCurtainMask)
@@ -166,7 +171,7 @@ export default class Game extends cc.Component {
       .start();
   }
 
-  async ending() {
+  async ending(success) {
     console.log("结束");
     this.blackCurtainMask.active = true;
     this.blackCurtainMask.opacity = 0;
@@ -181,7 +186,26 @@ export default class Game extends cc.Component {
       })
       .start();
 
-    await sleep(6000);
+    // 播放动画
+    console.log("播放动画");
+    this.endingNode.active = true;
+    this.endingNode.opacity = 255;
+    this.endingFail.active = !success;
+    this.endingSuccess.active = !!success;
+    await sleep(7000);
+    cc.tween(this.endingNode)
+      .to(1, { opacity: 0 })
+      .call(() => {
+        this.endingNode.opacity = 0;
+        this.endingNode.active = false;
+        this.endingFail.active = false;
+        this.endingSuccess.active = false;
+        console.log("播放动画结束");
+      })
+      .start();
+
+    // 新的一天
+    await sleep(3500);
     this.metempsychosisPanel();
     cc.tween(this.blackCurtainMask)
       .to(1, { opacity: 0 })

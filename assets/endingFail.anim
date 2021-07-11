@@ -1,0 +1,27 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "endingFail",
+  "_objFlags": 0,
+  "_native": "",
+  "_duration": 0.6666666666666666,
+  "sample": 60,
+  "speed": 0.1,
+  "wrapMode": 1,
+  "curveData": {
+    "comps": {
+      "cc.Sprite": {
+        "fillRange": [
+          {
+            "frame": 0,
+            "value": 0
+          },
+          {
+            "frame": 0.6666666666666666,
+            "value": -1
+          }
+        ]
+      }
+    }
+  },
+  "events": []
+}
