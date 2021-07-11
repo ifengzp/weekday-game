@@ -112,9 +112,9 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 187,
+      "g": 187,
+      "b": 187,
       "a": 255
     },
     "_contentSize": {
@@ -604,9 +604,6 @@
     "endingCover": {
       "__uuid__": "3e90dab9-cdd3-4e67-bba6-6615bdd0e81d"
     },
-    "endingNode": null,
-    "endingMask": null,
-    "endingLightning": null,
     "scoreLabel": {
       "__id__": 3
     },

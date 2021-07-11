@@ -47,7 +47,7 @@ export default class Main extends cc.Component {
   onLoad() {
     // !hack骚操作，不想转换坐标了，因为那个节点用的是widget，所以可以算出来，这个位置相对是固定的
     const { width, height } = cc.view.getVisibleSize();
-    this.cardStartPos = cc.v2(-width / 2, height / 2).subtract(cc.v2(-80, 100));
+    this.cardStartPos = cc.v2(-width / 2, height / 2).subtract(cc.v2(-80, 70));
 
     this.init();
     this.restart();
