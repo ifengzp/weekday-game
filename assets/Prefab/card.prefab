@@ -112,15 +112,15 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 187,
-      "g": 187,
-      "b": 187,
+      "r": 17,
+      "g": 17,
+      "b": 17,
       "a": 255
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 44.49,
-      "height": 50.4
+      "width": 15.57,
+      "height": 35.28
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -131,7 +131,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -63.597,
+        -61.824,
         115.535,
         0,
         0,
@@ -172,10 +172,10 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_useOriginalSize": false,
-    "_string": "10",
-    "_N$string": "10",
-    "_fontSize": 40,
-    "_lineHeight": 40,
+    "_string": "0",
+    "_N$string": "0",
+    "_fontSize": 28,
+    "_lineHeight": 28,
     "_enableWrapText": true,
     "_N$file": null,
     "_isSystemFontUsed": true,
