@@ -1,4 +1,3 @@
-import { random } from "./Utils";
 const { ccclass, property } = cc._decorator;
 
 @ccclass
@@ -44,9 +43,35 @@ export default class Card extends cc.Component {
     } else if (isBoss) {
       this.node.getComponent(cc.Sprite).spriteFrame = this.endingCover;
     } else {
-      const coverList = score > 0 ? this.positiveCover : this.negativeCover;
-      const idx = random(0, coverList.length - 1);
-      this.node.getComponent(cc.Sprite).spriteFrame = coverList[idx];
+      let cover;
+      switch (+score) {
+        case -1: // 邮件
+          cover = this.negativeCover[3];
+          break;
+        case -2: // 电话
+          cover = this.negativeCover[2];
+          break;
+        case -3: // 老板
+          cover = this.negativeCover[0];
+          break;
+        case -4: // 甲方
+          cover = this.negativeCover[1];
+          break;
+        case 1: // 香烟
+          cover = this.positiveCover[2];
+          break;
+        case 2: // 咖啡
+          cover = this.positiveCover[0];
+          break;
+        case 3: // 拉面
+          cover = this.positiveCover[1];
+          break;
+      }
+      // TODO: 紧急替换
+      // const coverList = score > 0 ? this.positiveCover : this.negativeCover;
+      // const idx = random(0, coverList.length - 1);
+      // this.node.getComponent(cc.Sprite).spriteFrame = coverList[idx];
+      this.node.getComponent(cc.Sprite).spriteFrame = cover;
     }
   }
 
