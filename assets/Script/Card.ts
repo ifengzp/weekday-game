@@ -2,6 +2,8 @@ const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class Card extends cc.Component {
+  @property({ type: cc.AudioClip }) hurtAudio: cc.AudioClip = null;
+
   @property([cc.SpriteFrame]) positiveCover: cc.SpriteFrame[] = [];
   @property([cc.SpriteFrame]) negativeCover: cc.SpriteFrame[] = [];
   @property([cc.SpriteFrame]) mineStatus: cc.SpriteFrame[] = [];
@@ -148,6 +150,7 @@ export default class Card extends cc.Component {
     console.log("卡片受伤害了");
     this.hurtMask.opacity = 255;
     // cc.tween(this.hurtMask).to(0.3, { opacity: 255 }).start();
+    cc.audioEngine.play(this.hurtAudio, false, 0.3);
     cc.tween(this.hurtBling)
       .to(0.7, { opacity: 255, scale: 1 }, { easing: "elasticOut" })
       .call(() => {

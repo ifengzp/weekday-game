@@ -30,6 +30,7 @@ Editor.Panel.extend({
           <option value="80">80</option>
           <option value="85">85</option>
           <option value="90">90</option>
+          <option value="99">99</option>
         </ui-select>
       </ui-prop>
       <ui-prop name="压缩下限（图片压缩的质量如果小于该参数将不会采用）">

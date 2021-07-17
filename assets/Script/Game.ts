@@ -95,7 +95,7 @@ export default class Game extends cc.Component {
           .call(() => {
             this.startPanelScenario();
             cc.tween(this.building)
-              .by(1.5, { scale: 0.6 })
+              .by(2.3, { scale: 0.6 })
               .call(() => {})
               .start();
           })
@@ -192,8 +192,16 @@ export default class Game extends cc.Component {
     console.log("播放动画");
     this.endingNode.active = true;
     this.endingNode.opacity = 255;
-    this.endingFail.active = !success;
-    this.endingSuccess.active = !!success;
+    if (success) {
+      this.endingFail.active = false;
+      this.endingSuccess.active = true;
+      this.endingSuccess.getComponent(cc.Animation).play();
+    } else {
+      this.endingSuccess.active = false;
+      this.endingFail.active = true;
+      this.endingFail.getComponent(cc.Animation).play();
+    }
+
     await sleep(7000);
     cc.tween(this.endingNode)
       .to(1, { opacity: 0 })
@@ -207,7 +215,7 @@ export default class Game extends cc.Component {
       .start();
 
     // 新的一天
-    await sleep(3500);
+    await sleep(2500);
     this.metempsychosisPanel();
     cc.tween(this.blackCurtainMask)
       .to(1, { opacity: 0 })

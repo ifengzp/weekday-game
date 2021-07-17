@@ -92,6 +92,7 @@ export default class Main extends cc.Component {
 
     if (isMe) {
       this.onTableCards[index].getComponent(Card).shake();
+      this.lock = false;
     } else {
       // 判断位置关系
       const attackRange = AttackRelation[this.mineIdx];
@@ -205,8 +206,8 @@ export default class Main extends cc.Component {
       this.countLabel.string = String(this.combination.length || "Boss");
       const score = this.isRandomTime
         ? Math.random() > 0.5
-          ? random(0, 3)
-          : -random(0, 3)
+          ? random(1, 3)
+          : -random(1, 3)
         : this.combination.pop();
       cardCmp.init(score, index, false);
       cardCmp.cardMove({

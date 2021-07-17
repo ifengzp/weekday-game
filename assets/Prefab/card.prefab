@@ -562,6 +562,9 @@
       "__id__": 1
     },
     "_enabled": true,
+    "hurtAudio": {
+      "__uuid__": "3c870157-66b6-4b73-ae04-ae6e2a05184f"
+    },
     "positiveCover": [
       {
         "__uuid__": "dbb829e9-f452-4cc6-9698-67a6611fb1f2"
