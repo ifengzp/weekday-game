@@ -1,4 +1,4 @@
-import { sleep } from "./Utils";
+import { random, sleep } from "./Utils";
 import Main from "./Main";
 
 const { ccclass, property } = cc._decorator;
@@ -26,11 +26,41 @@ export default class Game extends cc.Component {
   private playCount: number = 0;
 
   onLoad() {
+    this.setWxShare();
     this.earphone.active = true;
     // // TODO: 删除
     // this.test();
     this.node.on("gameWin", this.gameOver.bind(this, true));
     this.node.on("gameFail", this.gameOver.bind(this, false));
+  }
+
+  setWxShare() {
+    const wx: any = window["wx"];
+    if (!wx) return;
+
+    // 设置右上角分享
+    wx.showShareMenu({
+      withShareTicket: true,
+      menus: ["shareAppMessage", "shareTimeline"],
+    });
+    wx.onShareAppMessage(() => {
+      const tips = [
+        "又要熬夜加班了",
+        "996我受不了了",
+        "996 icu",
+        "我的悲剧人生",
+        "打工人不配夜生活",
+        "挣钱养家不容易",
+        "体检说我心律不齐",
+      ];
+      const tipIdx = random(0, tips.length - 1);
+      return {
+        title: tips[tipIdx],
+        imageUrlId: "TwqMpAJwTheGS/68B4XRkQ==",
+        imageUrl:
+          "https://mmocgame.qpic.cn/wechatgame/dTWXQtTAFkzYbu82F0paBdUicuflqxZf0Qs72cnY4X6dtfPf7bdmN15tAc4T0BHtM/0",
+      };
+    });
   }
 
   gameOver(success) {
